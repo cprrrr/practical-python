@@ -9,11 +9,12 @@ def read_portfolio(filename):
     with open(filename, 'rt') as f:
         rows = csv.reader(f)
         headers = next(rows)
-        for row in rows:
+        for rowno, row in enumerate(rows):
+            dic = dict(zip(headers, row))
             try:
-                tickle = str(row[0])
-                num = int(row[1])
-                price = float(row[2])
+                tickle = str(dic['name'])
+                num = int(dic['shares'])
+                price = float(dic['price'])
                 portfolio.append({'name' : tickle, 'shares' : num, 'price' : price})
             except ValueError:
                 print('something is wrong in '+str(filename)+'->', row)

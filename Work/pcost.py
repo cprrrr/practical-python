@@ -9,13 +9,15 @@ def portfolio_cost(filename):
     rows = csv.reader(f)
     headers = next(rows)
     cost = 0
-    for row in rows:
+
+    for rowno, row in enumerate(rows):
+        dic = dict(zip(headers, row))
         try:
-            num = int(row[1])
-            price = float(row[2])
+            num = int(dic['shares'])
+            price = float(dic['price'])
             cost += num * price
         except ValueError:
-            print('something is wrong->', row)
+            print(f"Row {rowno+1:d}: Coundn't convert:", row)
             continue
     f.close()
     return cost
@@ -23,6 +25,6 @@ def portfolio_cost(filename):
 if len(sys.argv) == 2:
     file = sys.argv[1]
 else:
-    file = 'D:/adastra/playground/pythontuto/practical-python/Work/Data/portfolio.csv'
+    file = 'D:/adastra/playground/pythontuto/practical-python/Work/Data/missing.csv'
 print(f'Total cost: {portfolio_cost(file):0.2f}')
 
