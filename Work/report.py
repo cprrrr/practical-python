@@ -4,7 +4,7 @@
 import sys
 import csv
 
-def read_portfolio(filename):
+def read_portfolio(filename: str)->list:
     portfolio = []
     with open(filename, 'rt') as f:
         rows = csv.reader(f)
@@ -21,7 +21,7 @@ def read_portfolio(filename):
                 continue
     return portfolio
 
-def read_endprice(filename):
+def read_endprice(filename: str)->dict:
     dic = {}
     with open(filename, 'rt') as f:
         rows = csv.reader(f)
@@ -35,28 +35,41 @@ def read_endprice(filename):
                 continue
     return dic
 
-def make_report(lisostock, dicoprice):
+def make_report(lisostock: list, dicoprice: dict)->list:
     rows = []
     for stock in lisostock:
         change = float(dicoprice[stock['name']] - stock['price'])
         rows.append((stock['name'], stock['shares'], dicoprice[stock['name']], change))
     return rows
 
+def print_report(tab: list):
+    print(f"\n{'Name':>10s} {'Shares':>10s} {'Price':>10s} {'Change':>10s}")
+    print(('-' * 10 + ' ') * 4)
+    gl = 0
+    for i in tab:
+        print(f"{i[0]:>10s} {i[1]:>10d} {'$' + str(round(i[2], 2)):>10s} {'$' + str(round(i[3], 2)):>10s}")
+        gl += i[1] * i[3]
+    print(f'\ntotal gain/loss: ${gl:0.2f}')
+
+def portfolio_report(filename: str, pricefilename='Data/prices.csv'):
+    portfolio = read_portfolio(filename)
+    endprice = read_endprice(pricefilename)
+    table = make_report(portfolio, endprice)
+    print_report(table)
+
+
 if len(sys.argv) == 2:
-    file = sys.argv[1]
+    file1 = sys.argv[1]
+    file2 = 'Data/prices.csv'
+elif len(sys.argv) == 3:
+    file1 =sys.argv[1]
+    file2 = sys.argv[2]
+elif len(sys.argv) == 1:
+    file1 = 'D:/adastra/playground/pythontuto/practical-python/Work/Data/portfolio.csv'
+    file2 = 'Data/prices.csv'
 else:
-    file = 'D:/adastra/playground/pythontuto/practical-python/Work/Data/portfolio.csv'
-portfolio = read_portfolio(file)
-endprice = read_endprice('Data/prices.csv')
-table = make_report(portfolio, endprice)
+    raise TypeError ('extra input')
 
-print(f"\n{'Name':>10s} {'Shares':>10s} {'Price':>10s} {'Change':>10s}")
-print(('-' * 10 + ' ') * 4)
-gl = 0
-for i in table:
-    print(f"{i[0]:>10s} {i[1]:>10d} {'$'+str(round(i[2], 2)):>10s} {'$'+str(round(i[3], 2)):>10s}")
-    gl += i[1] * i[3]
-
-print(f'\ntotal gain/loss: ${gl:0.2f}')
+portfolio_report(file1, file2)
 
 
