@@ -2,37 +2,15 @@
 #
 # Exercise 2.4
 import sys
-import csv
+import fileparse
 
-def read_portfolio(filename: str)->list:
-    portfolio = []
-    with open(filename, 'rt') as f:
-        rows = csv.reader(f)
-        headers = next(rows)
-        for rowno, row in enumerate(rows):
-            dic = dict(zip(headers, row))
-            try:
-                tickle = str(dic['name'])
-                num = int(dic['shares'])
-                price = float(dic['price'])
-                portfolio.append({'name' : tickle, 'shares' : num, 'price' : price})
-            except ValueError:
-                print('something is wrong in '+str(filename)+'->', row)
-                continue
+def read_portfolio(filename: str, select: list = None, types: list = None, delimit: str = None, silence_errors=False)->list:
+    portfolio = fileparse.parse_csv(filename=filename, select=select, types=types, delimit=delimit, has_headers=True, silence_errors=silence_errors)
     return portfolio
 
-def read_endprice(filename: str)->dict:
-    dic = {}
-    with open(filename, 'rt') as f:
-        rows = csv.reader(f)
-        for row in rows:
-            try:
-                name = str(row[0])
-                p = float(row[1])
-                dic[name] = p
-            except (ValueError, IndexError) as error:
-                print('something is wrong in '+str(filename)+'->', row)
-                continue
+def read_endprice(filename: str, select: list = None, types: list = None, delimit: str = None, silence_errors=False)->dict:
+    dic = fileparse.parse_csv(filename=filename, select=select, types=types, delimit=delimit, has_headers=False, silence_errors=silence_errors)
+    dic = dict(dic)
     return dic
 
 def make_report(lisostock: list, dicoprice: dict)->list:
@@ -52,8 +30,8 @@ def print_report(tab: list):
     print(f'\ntotal gain/loss: ${gl:0.2f}')
 
 def portfolio_report(filename: str, pricefilename='Data/prices.csv'):
-    portfolio = read_portfolio(filename)
-    endprice = read_endprice(pricefilename)
+    portfolio = read_portfolio(filename, types = [str, int, float])
+    endprice = read_endprice(pricefilename, types = [str, float])
     table = make_report(portfolio, endprice)
     print_report(table)
 
@@ -66,7 +44,7 @@ elif len(sys.argv) == 3:
     file2 = sys.argv[2]
 elif len(sys.argv) == 1:
     file1 = 'D:/adastra/playground/pythontuto/practical-python/Work/Data/portfolio.csv'
-    file2 = 'Data/prices.csv'
+    file2 = 'D:/adastra/playground/pythontuto/practical-python/Work/Data/prices.csv'
 else:
     raise TypeError ('extra input')
 

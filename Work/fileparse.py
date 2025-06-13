@@ -5,7 +5,17 @@
 import csv
 from pprint import pprint
 
-def csv_parse(filename: str, select: list = None, types: list = None, delimit: str = None,has_headers = True, silence_errors=False) -> list:
+def parse_csv(filename: str, select: list = None, types: list = None, delimit: str = None,has_headers = True, silence_errors=False) -> list:
+    '''
+    read a csv file and convert it to a list of dicts/list of tuples
+    :param filename:
+    :param select:
+    :param types:
+    :param delimit:
+    :param has_headers:
+    :param silence_errors:
+    :return:
+    '''
 
     if select and not has_headers:
         raise RuntimeError("select argument requires column headers")
@@ -20,13 +30,13 @@ def csv_parse(filename: str, select: list = None, types: list = None, delimit: s
         if has_headers: # with headers
             headers = next(rows)
             if select:  # if select fields
-                pass
+                indices = [headers.index(x) for x in select]
             else:
                 select = headers
                 indices = [headers.index(x) for x in select]
 
             for no, row in enumerate(rows):  # work through
-                if not row:  # skip blank row
+                if not row: # skip blank row
                     continue
                 else:
                     try:
@@ -48,7 +58,10 @@ def csv_parse(filename: str, select: list = None, types: list = None, delimit: s
                     continue
                 else:
                     try:
-                        record = tuple([a(b) for a, b in zip(types, row)])
+                        if types:
+                            record = tuple([a(b) for a, b in zip(types, row)])
+                        else:
+                            record = (row[0], row[1])
                         records.append(record)
                     except ValueError as e:
                         if silence_errors:
@@ -60,10 +73,10 @@ def csv_parse(filename: str, select: list = None, types: list = None, delimit: s
     return records
 
 def main(filename: str, select: list = None, types: list = None, delimit: str = None,has_headers = True, silence_errors=False):
-    portfolio = csv_parse(filename, select, types, delimit, has_headers, silence_errors)
+    portfolio = parse_csv(filename, select, types, delimit, has_headers, silence_errors)
     pprint(portfolio)
     return None
 
-main('Data/missing.csv', types=[str,int,float])
+main('Data/portfolio.csv',select=['name','shares','price'], types=[str,int,float])
 
 
