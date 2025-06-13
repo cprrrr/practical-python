@@ -72,11 +72,6 @@ def parse_csv(filename: str, select: list = None, types: list = None, delimit: s
 
     return records
 
-def main(filename: str, select: list = None, types: list = None, delimit: str = None,has_headers = True, silence_errors=False):
-    portfolio = parse_csv(filename, select, types, delimit, has_headers, silence_errors)
-    pprint(portfolio)
-    return None
 
-main('Data/portfolio.csv',select=['name','shares','price'], types=[str,int,float])
 
 

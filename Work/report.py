@@ -35,19 +35,15 @@ def portfolio_report(filename: str, pricefilename='Data/prices.csv'):
     table = make_report(portfolio, endprice)
     print_report(table)
 
+def main(argv: list):
+    f1 = str(argv[1])
+    f2 = str(argv[2])
+    portfolio_report(f1, f2)
 
-if len(sys.argv) == 2:
-    file1 = sys.argv[1]
-    file2 = 'Data/prices.csv'
-elif len(sys.argv) == 3:
-    file1 =sys.argv[1]
-    file2 = sys.argv[2]
-elif len(sys.argv) == 1:
-    file1 = 'D:/adastra/playground/pythontuto/practical-python/Work/Data/portfolio.csv'
-    file2 = 'D:/adastra/playground/pythontuto/practical-python/Work/Data/prices.csv'
-else:
-    raise TypeError ('extra input')
 
-portfolio_report(file1, file2)
+if __name__ == '__main__':
+    import sys
+    main(sys.argv)
+
 
 
