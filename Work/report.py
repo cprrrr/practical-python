@@ -4,12 +4,15 @@
 import sys
 import fileparse
 
+
 def read_portfolio(filename: str, select: list = None, types: list = None, delimit: str = None, silence_errors=False)->list:
-    portfolio = fileparse.parse_csv(filename=filename, select=select, types=types, delimit=delimit, has_headers=True, silence_errors=silence_errors)
+    with open(filename, 'rt') as f:
+        portfolio = fileparse.parse_csv(iname=f, select=select, types=types, delimit=delimit, has_headers=True, silence_errors=silence_errors)
     return portfolio
 
 def read_endprice(filename: str, select: list = None, types: list = None, delimit: str = None, silence_errors=False)->dict:
-    dic = fileparse.parse_csv(filename=filename, select=select, types=types, delimit=delimit, has_headers=False, silence_errors=silence_errors)
+    with open(filename, 'rt') as f:
+        dic = fileparse.parse_csv(iname=f, select=select, types=types, delimit=delimit, has_headers=False, silence_errors=silence_errors)
     dic = dict(dic)
     return dic
 
