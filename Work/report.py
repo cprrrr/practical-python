@@ -3,12 +3,14 @@
 # Exercise 2.4
 import sys
 import fileparse
+import stock
 
 
 def read_portfolio(filename: str, select: list = None, types: list = None, delimit: str = None, silence_errors=False)->list:
     with open(filename, 'rt') as f:
         portfolio = fileparse.parse_csv(iname=f, select=select, types=types, delimit=delimit, has_headers=True, silence_errors=silence_errors)
-    return portfolio
+    stocklis = [stock.Stock(i['name'], i['shares'], i['price']) for i in portfolio]
+    return stocklis
 
 def read_endprice(filename: str, select: list = None, types: list = None, delimit: str = None, silence_errors=False)->dict:
     with open(filename, 'rt') as f:
@@ -19,8 +21,8 @@ def read_endprice(filename: str, select: list = None, types: list = None, delimi
 def make_report(lisostock: list, dicoprice: dict)->list:
     rows = []
     for stock in lisostock:
-        change = float(dicoprice[stock['name']] - stock['price'])
-        rows.append((stock['name'], stock['shares'], dicoprice[stock['name']], change))
+        change = float(dicoprice[stock.name] - stock.price)
+        rows.append((stock.name, stock.shares, dicoprice[stock.name], change))
     return rows
 
 def print_report(tab: list):
