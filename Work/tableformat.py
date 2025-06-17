@@ -57,4 +57,9 @@ def create_formatter(name: str):
 
     return formatter
 
+def print_table(datatab: list, selects: list, fmt: TableFormatter):
+    fmt.headings(selects)
+    for s in datatab:
+        fmt.row([str(getattr(s, i)) for i in selects])
+
 
