@@ -68,3 +68,7 @@ def print_table(datatab: list, selects: list, fmt: TableFormatter):
 
 
 
+
+
+
+
