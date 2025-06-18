@@ -5,15 +5,22 @@ import sys
 import fileparse
 import stock
 import tableformat
+from portfolio import Portfolio
+from stock import Stock
 
 
-def read_portfolio(filename: str, select: list = None, types: list = None, delimit: str = None,
-                   silence_errors=False) -> list:
-    with open(filename, 'rt') as f:
-        portfolio = fileparse.parse_csv(iname=f, select=select, types=types, delimit=delimit, has_headers=True,
-                                        silence_errors=silence_errors)
-    stocklis = [stock.Stock(i['name'], i['shares'], i['price']) for i in portfolio]
-    return stocklis
+def read_portfolio(filename):
+    '''
+    Read a stock portfolio file into a list of dictionaries with keys
+    name, shares, and price.
+    '''
+    with open(filename) as file:
+        portdicts = fileparse.parse_csv(file,
+                                        select=['name','shares','price'],
+                                        types=[str,int,float])
+
+    portfolio = [ Stock(d['name'], d['shares'], d['price']) for d in portdicts ]
+    return Portfolio(portfolio)
 
 
 def read_endprice(filename: str, select: list = None, types: list = None, delimit: str = None,
@@ -25,7 +32,7 @@ def read_endprice(filename: str, select: list = None, types: list = None, delimi
     return dic
 
 
-def make_report(lisostock: list, dicoprice: dict) -> list:
+def make_report(lisostock: Portfolio, dicoprice: dict) -> list:
     rows = []
     for stock in lisostock:
         change = float(dicoprice[stock.name] - stock.price)
@@ -41,7 +48,7 @@ def print_report(tab: list, formatter: tableformat.TableFormatter):
 
 
 def portfolio_report(filename: str, pricefilename='Data/prices.csv', fmt: str = 'txt'):
-    portfolio = read_portfolio(filename, types=[str, int, float])
+    portfolio = read_portfolio(filename)
     endprice = read_endprice(pricefilename, types=[str, float])
     table = make_report(portfolio, endprice)
 

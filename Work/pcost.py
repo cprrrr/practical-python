@@ -4,12 +4,9 @@
 import sys
 import report
 
-def portfolio_cost(filename, types: list = [str, int, float]):
-    tab = report.read_portfolio(filename=filename, types=types)
-    cost = 0
-    for row in tab:
-        cost += row.shares*row.price
-    return cost
+def portfolio_cost(filename):
+    tab = report.read_portfolio(filename=filename)
+    return tab.total_cost
 def main(argv: list):
     if len(argv) == 2:
         f = str(argv[1])
