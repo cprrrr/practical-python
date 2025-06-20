@@ -18,13 +18,8 @@ def convert_types(rows, types):
         yield [t(d) for t, d in zip(types, row)]
 
 def make_dicts(rows, headers):
-    for row in rows:
-        yield dict(zip(headers, row))
+    return (dict(zip(headers, row)) for row in rows)
 
-def filter_symbols(rows, names):
-    for row in rows:
-        if row['name'] in names:
-            yield row
 
 def ticker(portfile, logfile, fmt):
     portfolio = report.read_portfolio(portfile)
@@ -34,7 +29,7 @@ def ticker(portfile, logfile, fmt):
     rows = parse_stock_data(lines)
     rows = convert_types(rows, [str, float, float])
     rows = make_dicts(rows, ['name', 'price', 'change'])
-    rows = filter_symbols(rows, portfolio)
+    rows = (row for row in rows if row['name'] in portfolio )
 
     tab = {}
     for i, row in enumerate(rows):
