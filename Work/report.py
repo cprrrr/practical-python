@@ -16,10 +16,10 @@ def read_portfolio(filename):
     '''
     with open(filename) as file:
         portdicts = fileparse.parse_csv(file,
-                                        select=['name','shares','price'],
-                                        types=[str,int,float])
+                                        select=['name', 'shares', 'price'],
+                                        types=[str, int, float])
 
-    portfolio = [ Stock(d['name'], d['shares'], d['price']) for d in portdicts ]
+    portfolio = [Stock(d['name'], d['shares'], d['price']) for d in portdicts]
     return Portfolio(portfolio)
 
 
@@ -35,7 +35,10 @@ def read_endprice(filename: str, select: list = None, types: list = None, delimi
 def make_report(lisostock: Portfolio, dicoprice: dict) -> list:
     rows = []
     for stock in lisostock:
-        change = float(dicoprice[stock.name] - stock.price)
+        try:
+            change = float(dicoprice[stock.name] - stock.price)
+        except Exception as e:
+            change = 0
         rows.append((stock.name, stock.shares, dicoprice[stock.name], change))
     return rows
 
