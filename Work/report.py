@@ -15,13 +15,8 @@ def read_portfolio(filename, **opts):
     name, shares, and price.
     '''
     with open(filename) as file:
-        portdicts = fileparse.parse_csv(file,
-                                        select=['name', 'shares', 'price'],
-                                        types=[str, int, float],
-                                        **opts)
-
-    portfolio = [Stock(**d) for d in portdicts]
-    return Portfolio(portfolio)
+        portfolio = Portfolio.from_csv(file, **opts)
+    return portfolio
 
 
 def read_endprice(filename: str, select: list = None, types: list = None, delimit: str = None,
